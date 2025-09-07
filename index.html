@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fun Personality Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1: #ffefba;
+    --bg2: #ffffff;
+    --accent: #ff6b6b;
+    --accent2: #5af3c8;
+    --card: #ffffff;
+    --muted:#6b7280;
+  }
+  html,body{height:100%;margin:0;}
+  body{
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(135deg,var(--bg1),#dbeafe 60%);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:48px 20px;
+    color:#111827;
+  }
+
+  .shell{
+    width:100%;
+    max-width:900px;
+  }
+
+  .header{
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .title{
+    font-size:28px;
+    font-weight:700;
+    line-height:1;
+  }
+  .subtitle{
+    font-size:14px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+
+  /* card */
+  .card{
+    background:var(--card);
+    border-radius:14px;
+    padding:22px;
+    box-shadow: 0 8px 30px rgba(16,24,40,0.12);
+    overflow:hidden;
+  }
+
+  .instructions{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    background:linear-gradient(90deg, rgba(90,243,200,0.06), rgba(255,107,107,0.04));
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    color:#374151;
+    font-size:13px;
+  }
+  .questions{
+    display:grid;
+    gap:12px;
+  }
+
+  .qcard{
+    border-radius:10px;
+    padding:14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,247,255,0.9));
+    border:1px solid rgba(15,23,42,0.03);
+    box-shadow: 0 2px 10px rgba(2,6,23,0.03);
+  }
+  .qtext{font-weight:600;margin-bottom:10px;font-size:15px}
+  .likert{
+    display:flex;
+    gap:8px;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  /* each option box */
+  .opt{
+    flex:1;
+    border-radius:8px;
+    padding:8px 6px;
+    text-align:center;
+    cursor:pointer;
+    user-select:none;
+    font-weight:600;
+    border:1px solid transparent;
+    transition:all .12s ease;
+    background:transparent;
+    color:#374151;
+  }
+  .opt:hover{ transform:translateY(-4px); box-shadow: 0 6px 18px rgba(59,130,246,0.12); }
+  input[type="radio"]{display:none}
+
+  /* selected style via .selected on label */
+  .opt.selected{
+    background:linear-gradient(90deg,#7c3aed22,#4f46e5ff);
+    color:white;
+    box-shadow: 0 8px 25px rgba(99,102,241,0.18);
+    transform:translateY(-2px);
+  }
+
+  /* header row numbers */
+  .likert .num{
+    font-size:12px;
+    color:var(--muted);
+    width:28px;
+  }
+
+  .submitRow{display:flex;justify-content:center;margin-top:18px}
+  .btn{
+    background:linear-gradient(90deg,#ff6b6b,#7c3aed);
+    color:white;
+    border:none;
+    padding:12px 20px;
+    font-weight:700;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.14);
+    font-size:16px;
+  }
+  .btn:active{transform:translateY(1px)}
+
+  /* results */
+  .results{
+    margin-top:16px;
+    display:grid;
+    gap:12px;
+  }
+  .resultCard{
+    padding:16px;
+    border-radius:12px;
+    background:linear-gradient(180deg,#ffffff,#f8fafc);
+    border:1px solid rgba(15,23,42,0.04);
+    animation: fadeIn .28s ease;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .icon{
+    font-size:28px;
+    width:60px;
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:linear-gradient(180deg,#fff,#f3f4f6);
+    box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+  }
+  .rtext h4{margin:0 0 6px 0;font-size:16px}
+  .muted{color:var(--muted);font-size:13px;margin:0}
+
+  .scoreBadge{
+    margin-left:auto;
+    font-weight:700;
+    background:#111827;
+    color:white;
+    padding:8px 10px;
+    border-radius:8px;
+    font-size:13px;
+  }
+
+  @keyframes fadeIn{ from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+  @media (max-width:640px){
+    .likert{gap:6px}
+    .opt{font-size:13px;padding:8px}
+    .icon{width:50px;height:50px;font-size:22px}
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="header">
+      <div class="title">Which Personality Fits You?</div>
+      <div class="subtitle">Answer honestly: 1 = strongly disagree … 7 = strongly agree</div>
+    </div>
+
+    <div class="card">
+      <div class="instructions">
+        <div style="font-size:20px">✨</div>
+        <div>
+          <div style="font-weight:600">How it works</div>
+          <div style="font-size:13px;color:var(--muted)">Select one number per statement. Categories are hidden while answering — submit to see your 3-part breakdown.</div>
+        </div>
+      </div>
+
+      <form id="quiz">
+        <div class="questions" id="questionsWrap">
+          <!-- Questions will be inserted here by JS for cleanliness -->
+        </div>
+
+        <div class="submitRow">
+          <button type="button" class="btn" id="submitBtn">Submit Quiz</button>
+        </div>
+      </form>
+
+      <div id="resultsArea" class="results" style="display:none; margin-top:18px"></div>
+    </div>
+  </div>
+
+<script>
+/* QUESTIONS: internal array. Each item:
+  {id:'q1', text:'...', trait:'extroversion'|'conscientiousness'|'neuroticism', reverse: true/false}
+  reverse true means use reverse scoring (value -> 8 - value)
+*/
+const questions = [
+  {id:'q1', text:'I prefer communicating through texts, calls, or social media rather than in person.', trait:'extroversion', reverse:false},
+  {id:'q2', text:'I am content spending time at home without making plans on weekends.', trait:'extroversion', reverse:false},
+  {id:'q3', text:'My “social battery” decreases after spending extended periods of time with people.', trait:'extroversion', reverse:false},
+  {id:'q4', text:'I prefer traveling to quiet places over busy cities.', trait:'extroversion', reverse:false},
+  {id:'q5', text:'I enjoy speaking in front of a group, often improvising.', trait:'extroversion', reverse:true},
+  {id:'q6', text:'I prefer doing school or work tasks with others rather than alone.', trait:'extroversion', reverse:true},
+  {id:'q7', text:'I am comfortable expressing my opinions, regardless of others’.', trait:'extroversion', reverse:true},
+
+  {id:'q8', text:'When completing a task, I take extra care to avoid making mistakes.', trait:'conscientiousness', reverse:false},
+  {id:'q9', text:'I consistently set challenging yet achievable goals.', trait:'conscientiousness', reverse:false},
+  {id:'q10', text:'I am able to concentrate on tasks despite distractions.', trait:'conscientiousness', reverse:false},
+  {id:'q11', text:'I maintain a neat and organized room.', trait:'conscientiousness', reverse:false},
+  {id:'q12', text:'I find myself breaking promises and commitments.', trait:'conscientiousness', reverse:true},
+  {id:'q13', text:'I struggle with time management and keeping up with responsibilities.', trait:'conscientiousness', reverse:true},
+  {id:'q14', text:'I often go through my week without making a plan or schedule.', trait:'conscientiousness', reverse:true},
+
+  {id:'q15', text:'I often feel anxious about small things.', trait:'neuroticism', reverse:false},
+  {id:'q16', text:'I get upset easily when things don’t go as planned.', trait:'neuroticism', reverse:false},
+  {id:'q17', text:'I find myself worrying frequently about the future.', trait:'neuroticism', reverse:false},
+  {id:'q18', text:'I often feel down or depressed for no clear reason.', trait:'neuroticism', reverse:false},
+  {id:'q19', text:'I stay calm under pressure.', trait:'neuroticism', reverse:true},
+  {id:'q20', text:'I bounce back quickly after setbacks.', trait:'neuroticism', reverse:true},
+  {id:'q21', text:'I rarely let emotions control my decisions.', trait:'neuroticism', reverse:true}
+];
+
+// create question nodes
+const wrap = document.getElementById('questionsWrap');
+
+questions.forEach((q, idx) => {
+  const qCard = document.createElement('div');
+  qCard.className = 'qcard';
+  qCard.dataset.id = q.id;
+  qCard.dataset.trait = q.trait;
+  qCard.dataset.reverse = q.reverse ? 'true' : 'false';
+
+  const qtext = document.createElement('div');
+  qtext.className = 'qtext';
+  qtext.textContent = (idx+1) + '. ' + q.text;
+  qCard.appendChild(qtext);
+
+  // likert header row (small numbers)
+  const likert = document.createElement('div');
+  likert.className = 'likert';
+
+  // create 7 options
+  for(let val=1; val<=7; val++){
+    const label = document.createElement('label');
+    label.className = 'opt';
+    label.setAttribute('data-value', val);
+    label.setAttribute('aria-role','radio');
+
+    const radio = document.createElement('input');
+    radio.type='radio';
+    radio.name=q.id;
+    radio.value=val;
+    radio.id = q.id + '-' + val;
+
+    label.appendChild(radio);
+
+    const span = document.createElement('div');
+    span.style.fontSize='13px';
+    span.textContent = val;
+    label.appendChild(span);
+
+    // clicking label selects radio and toggles selected style
+    label.addEventListener('click', (ev) => {
+      // set the radio as checked
+      radio.checked = true;
+      // clear any other selected in same group
+      const group = document.getElementsByName(q.id);
+      document.querySelectorAll('[name="'+q.id+'"]').forEach(x => {
+        // the inputs are hidden; find their parent labels and remove 'selected'
+        if(x.parentElement) x.parentElement.classList.remove('selected');
+      });
+      // add selected to this label
+      label.classList.add('selected');
+    });
+
+    likert.appendChild(label);
+  }
+
+  qCard.appendChild(likert);
+  wrap.appendChild(qCard);
+});
+
+// Handling submit
+document.getElementById('submitBtn').addEventListener('click', () => {
+  // ensure all answered
+  const totalQs = questions.length;
+  let answered = 0;
+  const answers = {};
+  questions.forEach(q => {
+    const checked = document.querySelector('input[name="'+q.id+'"]:checked');
+    if(checked) { answered++; answers[q.id] = parseInt(checked.value); }
+  });
+  if(answered < totalQs){
+    alert('Please answer every question before submitting. You have answered ' + answered + ' of ' + totalQs + '.');
+    return;
+  }
+
+  // scoring
+  const traits = {
+    extroversion: {sum:0, count:0},
+    conscientiousness: {sum:0, count:0},
+    neuroticism: {sum:0, count:0}
+  };
+
+  questions.forEach(q => {
+    let val = answers[q.id];
+    if(q.reverse) val = 8 - val; // reverse scoring
+    traits[q.trait].sum += val;
+    traits[q.trait].count += 1;
+  });
+
+  // totals (7 items => range 7-49). cutoff per instructions: >=28 maps to first named
+  // For extroversion: original mapping was "Introverted → 28+  Extroverted → <28"
+  // We'll follow exactly: if ext_total >=28 -> Introverted; else Extroverted
+  const extTotal = traits.extroversion.sum;
+  const conTotal = traits.conscientiousness.sum;
+  const neuTotal = traits.neuroticism.sum;
+
+  const extLabel = extTotal >= 28 ? 'Introverted' : 'Extroverted';
+  const conLabel = conTotal >= 28 ? 'Conscientious' : 'Unconscientious';
+  const neuLabel = neuTotal >= 28 ? 'Neurotic' : 'Emotionally Stable';
+
+  // generate friendly explanations
+  const explanations = {
+    extroversion:{
+      Introverted: "You prefer quieter settings, recharge alone, and often prioritize close one-on-one connections over large social scenes.",
+      Extroverted: "You enjoy social interaction, feel energized by groups, and often seek out lively environments and social activities."
+    },
+    conscientiousness:{
+      Conscientious: "You're organized, dependable, and focused on goals—you keep schedules and pay attention to details.",
+      Unconscientious: "You tend to be more spontaneous and relaxed about plans and schedules; structure may not be your top priority."
+    },
+    neuroticism:{
+      Neurotic: "You are more prone to stress and emotional fluctuation; you may worry more and feel strong emotional reactions.",
+      "Emotionally Stable": "You tend to remain calm under pressure, recover quickly from setbacks, and regulate emotions effectively."
+    }
+  };
+
+  // Show results area
+  const resultsArea = document.getElementById('resultsArea');
+  resultsArea.innerHTML = ''; // clear
+
+  // helper to create a result card
+  function makeCard(icon, title, label, explanation, score){
+    const card = document.createElement('div'); card.className='resultCard';
+    const ic = document.createElement('div'); ic.className='icon'; ic.textContent = icon;
+    const rt = document.createElement('div'); rt.className='rtext';
+    const h4 = document.createElement('h4'); h4.textContent = title + ' → ' + label;
+    const p = document.createElement('p'); p.className='muted'; p.textContent = explanation;
+    rt.appendChild(h4); rt.appendChild(p);
+    const badge = document.createElement('div'); badge.className='scoreBadge'; badge.textContent = score + ' pts';
+    card.appendChild(ic); card.appendChild(rt); card.appendChild(badge);
+    return card;
+  }
+
+  // three cards: extroversion, conscientiousness, neuroticism
+  resultsArea.appendChild(makeCard('🎭', 'Extraversion', extLabel, explanations.extroversion[extLabel], extTotal));
+  resultsArea.appendChild(makeCard('📋', 'Conscientiousness', conLabel, explanations.conscientiousness[conLabel], conTotal));
+  resultsArea.appendChild(makeCard('💭', 'Emotionality', neuLabel, explanations.neuroticism[neuLabel], neuTotal));
+
+  // show also a short composite line
+  const composite = document.createElement('div');
+  composite.className = 'resultCard';
+  composite.style.justifyContent = 'space-between';
+  composite.innerHTML = '<div style="font-weight:700">Composite:</div><div style="font-weight:700">' + extLabel + ' — ' + conLabel + ' — ' + neuLabel + '</div>';
+  resultsArea.appendChild(composite);
+
+  resultsArea.style.display = 'block';
+  // smooth scroll to results
+  setTimeout(()=> resultsArea.scrollIntoView({behavior:'smooth', block:'center'}), 60);
+});
+</script>
+</body>
+</html>

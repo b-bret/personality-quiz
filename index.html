@@ -1,394 +1,610 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Fun Personality Quiz</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Big Three Personality Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1: #ffefba;
-    --bg2: #ffffff;
-    --accent: #ff6b6b;
-    --accent2: #5af3c8;
-    --card: #ffffff;
+    --accent1: #6a11cb;
+    --accent2: #2575fc;
     --muted:#6b7280;
+    --pill:#f1f5f9;
+    --pill-selected:#6a11cb;
   }
-  html,body{height:100%;margin:0;}
+  *{box-sizing:border-box}
   body{
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: linear-gradient(135deg,var(--bg1),#dbeafe 60%);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    margin:0;
+    background: linear-gradient(135deg,#e6f7ff 0%, #fff0f6 100%);
+    -webkit-font-smoothing:antialiased;
+    color:#0f172a;
+    padding:36px 18px;
     display:flex;
-    align-items:flex-start;
     justify-content:center;
-    padding:48px 20px;
-    color:#111827;
   }
 
-  .shell{
+  .page{
     width:100%;
-    max-width:900px;
+    max-width:980px;
   }
 
-  .header{
+  header{
     text-align:center;
-    margin-bottom:18px;
+    margin-bottom:20px;
   }
-  .title{
+  header h1{
+    font-family:Poppins, Inter, sans-serif;
     font-size:28px;
-    font-weight:700;
-    line-height:1;
+    margin:0;
+    color:var(--accent1);
   }
-  .subtitle{
-    font-size:14px;
-    color:var(--muted);
-    margin-top:6px;
-  }
+  header p{margin:6px 0 0;color:var(--muted)}
 
-  /* card */
   .card{
-    background:var(--card);
-    border-radius:14px;
-    padding:22px;
-    box-shadow: 0 8px 30px rgba(16,24,40,0.12);
+    background: #fff;
+    border-radius:18px;
+    padding:28px;
+    box-shadow: 0 18px 50px rgba(16,24,40,0.08);
     overflow:hidden;
   }
 
-  .instructions{
-    display:flex;
-    gap:12px;
-    align-items:center;
-    background:linear-gradient(90deg, rgba(90,243,200,0.06), rgba(255,107,107,0.04));
-    padding:12px;
-    border-radius:10px;
-    margin-bottom:18px;
-    color:#374151;
-    font-size:13px;
-  }
-  .questions{
-    display:grid;
-    gap:12px;
+  h2.section{
+    font-family:Poppins, Inter, sans-serif;
+    color:var(--accent1);
+    margin:18px 0 10px;
+    font-size:18px;
   }
 
-  .qcard{
-    border-radius:10px;
-    padding:14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,247,255,0.9));
-    border:1px solid rgba(15,23,42,0.03);
-    box-shadow: 0 2px 10px rgba(2,6,23,0.03);
+  .question{
+    background: linear-gradient(180deg,#ffffff,#fbfdff);
+    border-radius:12px;
+    padding:14px 14px;
+    margin:12px 0;
+    box-shadow: 0 6px 18px rgba(16,24,40,0.03);
+    transition:transform .18s ease, box-shadow .18s ease;
   }
-  .qtext{font-weight:600;margin-bottom:10px;font-size:15px}
+  .question:hover{
+    transform:translateY(-4px);
+    box-shadow: 0 12px 30px rgba(16,24,40,0.06);
+  }
+
+  .qtext{font-weight:600;margin:0 0 8px 0}
+
   .likert{
     display:flex;
-    gap:8px;
-    justify-content:space-between;
-    align-items:center;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
   }
-
-  /* each option box */
-  .opt{
-    flex:1;
-    border-radius:8px;
-    padding:8px 6px;
+  /* Input immediately followed by label. We'll style the label. */
+  .likert input{display:none}
+  .likert label{
+    padding:10px 12px;
+    background:var(--pill);
+    border-radius:10px;
+    min-width:44px;
     text-align:center;
-    cursor:pointer;
-    user-select:none;
     font-weight:600;
-    border:1px solid transparent;
-    transition:all .12s ease;
-    background:transparent;
-    color:#374151;
+    cursor:pointer;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
+    color:#0f172a;
+    border:1px solid rgba(15,23,42,0.04);
+    user-select:none;
   }
-  .opt:hover{ transform:translateY(-4px); box-shadow: 0 6px 18px rgba(59,130,246,0.12); }
-  input[type="radio"]{display:none}
-
-  /* selected style via .selected on label */
-  .opt.selected{
-    background:linear-gradient(90deg,#7c3aed22,#4f46e5ff);
+  .likert input:checked + label{
+    background: linear-gradient(90deg,var(--pill-selected),var(--accent2));
     color:white;
-    box-shadow: 0 8px 25px rgba(99,102,241,0.18);
-    transform:translateY(-2px);
-  }
-
-  /* header row numbers */
-  .likert .num{
-    font-size:12px;
-    color:var(--muted);
-    width:28px;
+    transform:scale(1.06);
+    box-shadow: 0 8px 26px rgba(59,130,246,0.14);
+    border-color:transparent;
   }
 
   .submitRow{display:flex;justify-content:center;margin-top:18px}
   .btn{
-    background:linear-gradient(90deg,#ff6b6b,#7c3aed);
+    background: linear-gradient(90deg,var(--accent1),var(--accent2));
     color:white;
     border:none;
-    padding:12px 20px;
+    padding:12px 22px;
+    border-radius:999px;
     font-weight:700;
-    border-radius:12px;
     cursor:pointer;
-    box-shadow: 0 8px 24px rgba(124,58,237,0.14);
     font-size:16px;
+    box-shadow: 0 12px 30px rgba(99,102,241,0.12);
+    transition: transform .15s ease, box-shadow .15s ease;
   }
-  .btn:active{transform:translateY(1px)}
+  .btn:hover{ transform:translateY(-4px); box-shadow: 0 18px 40px rgba(99,102,241,0.18); }
+  .btn:active{ transform:translateY(-1px) }
 
-  /* results */
-  .results{
-    margin-top:16px;
-    display:grid;
-    gap:12px;
+  /* Results */
+  #results{
+    margin-top:18px;
+    display:none;
+    animation: resultShow .5s ease both;
   }
+  @keyframes resultShow{
+    from{opacity:0; transform: translateY(8px)} to{opacity:1; transform:none}
+  }
+
   .resultCard{
+    background: linear-gradient(180deg,#ffffff,#fbfbff);
+    border-radius:12px;
     padding:16px;
-    border-radius:12px;
-    background:linear-gradient(180deg,#ffffff,#f8fafc);
-    border:1px solid rgba(15,23,42,0.04);
-    animation: fadeIn .28s ease;
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
+    margin:12px 0;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.04);
   }
-  .icon{
-    font-size:28px;
-    width:60px;
-    height:60px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:12px;
-    background:linear-gradient(180deg,#fff,#f3f4f6);
-    box-shadow: 0 6px 18px rgba(2,6,23,0.04);
-  }
-  .rtext h4{margin:0 0 6px 0;font-size:16px}
-  .muted{color:var(--muted);font-size:13px;margin:0}
 
+  .traitTitle{display:flex;align-items:center;gap:10px;margin:0 0 8px 0}
+  .traitTitle h3{margin:0;font-size:16px;color:var(--accent1)}
+  .traitDesc{color:var(--muted);margin:8px 0 0 0;font-size:14px}
+
+  .scale{
+    position:relative;
+    height:12px;
+    background:#eef2ff;
+    border-radius:999px;
+    margin:12px 0;
+    overflow:hidden;
+  }
+  .scale .fill{
+    position:absolute;left:0;top:0;height:100%;width:0%;
+    background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    transition:width 1s ease;
+  }
+  .marker{
+    position:absolute;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:18px;height:18px;border-radius:6px;
+    background:#fff;
+    border:4px solid #fff;
+    box-shadow: 0 6px 18px rgba(99,102,241,0.16);
+    transition:left 1s cubic-bezier(.2,.9,.2,1);
+  }
+  .barLabels{
+    display:flex;justify-content:space-between;font-weight:700;color:var(--muted);font-size:14px;margin-top:6px;
+  }
+
+  .scoreLine{display:flex;justify-content:space-between;gap:12px;margin-top:10px;align-items:center}
   .scoreBadge{
-    margin-left:auto;
-    font-weight:700;
-    background:#111827;
-    color:white;
-    padding:8px 10px;
-    border-radius:8px;
-    font-size:13px;
+    background:#0f172a;color:white;padding:8px 10px;border-radius:8px;font-weight:700;font-size:13px;
   }
 
-  @keyframes fadeIn{ from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
   @media (max-width:640px){
-    .likert{gap:6px}
-    .opt{font-size:13px;padding:8px}
-    .icon{width:50px;height:50px;font-size:22px}
+    .likert label{min-width:36px;padding:8px}
+    .btn{width:100%}
   }
 </style>
 </head>
 <body>
-  <div class="shell">
-    <div class="header">
-      <div class="title">Which Personality Fits You?</div>
-      <div class="subtitle">Answer honestly: 1 = strongly disagree … 7 = strongly agree</div>
-    </div>
+  <div class="page">
+    <header>
+      <h1>Big Three Personality Quiz</h1>
+      <p>Answer honestly — 1 = strongly disagree, 7 = strongly agree</p>
+    </header>
 
     <div class="card">
-      <div class="instructions">
-        <div style="font-size:20px">✨</div>
-        <div>
-          <div style="font-weight:600">How it works</div>
-          <div style="font-size:13px;color:var(--muted)">Select one number per statement. Categories are hidden while answering — submit to see your 3-part breakdown.</div>
-        </div>
-      </div>
+      <form id="quizForm">
+        <!-- Introvert vs Extrovert -->
+        <h2 class="section">Introvert vs. Extrovert</h2>
 
-      <form id="quiz">
-        <div class="questions" id="questionsWrap">
-          <!-- Questions will be inserted here by JS for cleanliness -->
+        <div class="question">
+          <p class="qtext">1) I prefer communicating through texts, calls, or social media rather than in person.</p>
+          <div class="likert" data-q="q1">
+            <input id="q1-1" type="radio" name="q1" value="1" required><label for="q1-1">1</label>
+            <input id="q1-2" type="radio" name="q1" value="2"><label for="q1-2">2</label>
+            <input id="q1-3" type="radio" name="q1" value="3"><label for="q1-3">3</label>
+            <input id="q1-4" type="radio" name="q1" value="4"><label for="q1-4">4</label>
+            <input id="q1-5" type="radio" name="q1" value="5"><label for="q1-5">5</label>
+            <input id="q1-6" type="radio" name="q1" value="6"><label for="q1-6">6</label>
+            <input id="q1-7" type="radio" name="q1" value="7"><label for="q1-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">2) I am content spending time at home without making plans on weekends.</p>
+          <div class="likert" data-q="q2">
+            <input id="q2-1" type="radio" name="q2" value="1" required><label for="q2-1">1</label>
+            <input id="q2-2" type="radio" name="q2" value="2"><label for="q2-2">2</label>
+            <input id="q2-3" type="radio" name="q2" value="3"><label for="q2-3">3</label>
+            <input id="q2-4" type="radio" name="q2" value="4"><label for="q2-4">4</label>
+            <input id="q2-5" type="radio" name="q2" value="5"><label for="q2-5">5</label>
+            <input id="q2-6" type="radio" name="q2" value="6"><label for="q2-6">6</label>
+            <input id="q2-7" type="radio" name="q2" value="7"><label for="q2-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">3) My “social battery” decreases after spending extended periods of time with people.</p>
+          <div class="likert" data-q="q3">
+            <input id="q3-1" type="radio" name="q3" value="1" required><label for="q3-1">1</label>
+            <input id="q3-2" type="radio" name="q3" value="2"><label for="q3-2">2</label>
+            <input id="q3-3" type="radio" name="q3" value="3"><label for="q3-3">3</label>
+            <input id="q3-4" type="radio" name="q3" value="4"><label for="q3-4">4</label>
+            <input id="q3-5" type="radio" name="q3" value="5"><label for="q3-5">5</label>
+            <input id="q3-6" type="radio" name="q3" value="6"><label for="q3-6">6</label>
+            <input id="q3-7" type="radio" name="q3" value="7"><label for="q3-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">4) I prefer traveling to quiet places over busy cities.</p>
+          <div class="likert" data-q="q4">
+            <input id="q4-1" type="radio" name="q4" value="1" required><label for="q4-1">1</label>
+            <input id="q4-2" type="radio" name="q4" value="2"><label for="q4-2">2</label>
+            <input id="q4-3" type="radio" name="q4" value="3"><label for="q4-3">3</label>
+            <input id="q4-4" type="radio" name="q4" value="4"><label for="q4-4">4</label>
+            <input id="q4-5" type="radio" name="q4" value="5"><label for="q4-5">5</label>
+            <input id="q4-6" type="radio" name="q4" value="6"><label for="q4-6">6</label>
+            <input id="q4-7" type="radio" name="q4" value="7"><label for="q4-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">5) I enjoy speaking in front of a group, often improvising. (reverse)</p>
+          <div class="likert" data-q="q5">
+            <input id="q5-1" type="radio" name="q5" value="1" required><label for="q5-1">1</label>
+            <input id="q5-2" type="radio" name="q5" value="2"><label for="q5-2">2</label>
+            <input id="q5-3" type="radio" name="q5" value="3"><label for="q5-3">3</label>
+            <input id="q5-4" type="radio" name="q5" value="4"><label for="q5-4">4</label>
+            <input id="q5-5" type="radio" name="q5" value="5"><label for="q5-5">5</label>
+            <input id="q5-6" type="radio" name="q5" value="6"><label for="q5-6">6</label>
+            <input id="q5-7" type="radio" name="q5" value="7"><label for="q5-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">6) I prefer doing school or work tasks with others rather than alone. (reverse)</p>
+          <div class="likert" data-q="q6">
+            <input id="q6-1" type="radio" name="q6" value="1" required><label for="q6-1">1</label>
+            <input id="q6-2" type="radio" name="q6" value="2"><label for="q6-2">2</label>
+            <input id="q6-3" type="radio" name="q6" value="3"><label for="q6-3">3</label>
+            <input id="q6-4" type="radio" name="q6" value="4"><label for="q6-4">4</label>
+            <input id="q6-5" type="radio" name="q6" value="5"><label for="q6-5">5</label>
+            <input id="q6-6" type="radio" name="q6" value="6"><label for="q6-6">6</label>
+            <input id="q6-7" type="radio" name="q6" value="7"><label for="q6-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">7) I am comfortable expressing my opinions, regardless of others’. (reverse)</p>
+          <div class="likert" data-q="q7">
+            <input id="q7-1" type="radio" name="q7" value="1" required><label for="q7-1">1</label>
+            <input id="q7-2" type="radio" name="q7" value="2"><label for="q7-2">2</label>
+            <input id="q7-3" type="radio" name="q7" value="3"><label for="q7-3">3</label>
+            <input id="q7-4" type="radio" name="q7" value="4"><label for="q7-4">4</label>
+            <input id="q7-5" type="radio" name="q7" value="5"><label for="q7-5">5</label>
+            <input id="q7-6" type="radio" name="q7" value="6"><label for="q7-6">6</label>
+            <input id="q7-7" type="radio" name="q7" value="7"><label for="q7-7">7</label>
+          </div>
+        </div>
+
+        <!-- Conscientiousness -->
+        <h2 class="section">Conscientiousness</h2>
+
+        <div class="question">
+          <p class="qtext">8) When completing a task, I take extra care to avoid making mistakes.</p>
+          <div class="likert" data-q="q8">
+            <input id="q8-1" type="radio" name="q8" value="1" required><label for="q8-1">1</label>
+            <input id="q8-2" type="radio" name="q8" value="2"><label for="q8-2">2</label>
+            <input id="q8-3" type="radio" name="q8" value="3"><label for="q8-3">3</label>
+            <input id="q8-4" type="radio" name="q8" value="4"><label for="q8-4">4</label>
+            <input id="q8-5" type="radio" name="q8" value="5"><label for="q8-5">5</label>
+            <input id="q8-6" type="radio" name="q8" value="6"><label for="q8-6">6</label>
+            <input id="q8-7" type="radio" name="q8" value="7"><label for="q8-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">9) I consistently set challenging yet achievable goals.</p>
+          <div class="likert" data-q="q9">
+            <input id="q9-1" type="radio" name="q9" value="1" required><label for="q9-1">1</label>
+            <input id="q9-2" type="radio" name="q9" value="2"><label for="q9-2">2</label>
+            <input id="q9-3" type="radio" name="q9" value="3"><label for="q9-3">3</label>
+            <input id="q9-4" type="radio" name="q9" value="4"><label for="q9-4">4</label>
+            <input id="q9-5" type="radio" name="q9" value="5"><label for="q9-5">5</label>
+            <input id="q9-6" type="radio" name="q9" value="6"><label for="q9-6">6</label>
+            <input id="q9-7" type="radio" name="q9" value="7"><label for="q9-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">10) I am able to concentrate on tasks despite distractions.</p>
+          <div class="likert" data-q="q10">
+            <input id="q10-1" type="radio" name="q10" value="1" required><label for="q10-1">1</label>
+            <input id="q10-2" type="radio" name="q10" value="2"><label for="q10-2">2</label>
+            <input id="q10-3" type="radio" name="q10" value="3"><label for="q10-3">3</label>
+            <input id="q10-4" type="radio" name="q10" value="4"><label for="q10-4">4</label>
+            <input id="q10-5" type="radio" name="q10" value="5"><label for="q10-5">5</label>
+            <input id="q10-6" type="radio" name="q10" value="6"><label for="q10-6">6</label>
+            <input id="q10-7" type="radio" name="q10" value="7"><label for="q10-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">11) I maintain a neat and organized room.</p>
+          <div class="likert" data-q="q11">
+            <input id="q11-1" type="radio" name="q11" value="1" required><label for="q11-1">1</label>
+            <input id="q11-2" type="radio" name="q11" value="2"><label for="q11-2">2</label>
+            <input id="q11-3" type="radio" name="q11" value="3"><label for="q11-3">3</label>
+            <input id="q11-4" type="radio" name="q11" value="4"><label for="q11-4">4</label>
+            <input id="q11-5" type="radio" name="q11" value="5"><label for="q11-5">5</label>
+            <input id="q11-6" type="radio" name="q11" value="6"><label for="q11-6">6</label>
+            <input id="q11-7" type="radio" name="q11" value="7"><label for="q11-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">12) I find myself breaking promises and commitments. (reverse)</p>
+          <div class="likert" data-q="q12">
+            <input id="q12-1" type="radio" name="q12" value="1" required><label for="q12-1">1</label>
+            <input id="q12-2" type="radio" name="q12" value="2"><label for="q12-2">2</label>
+            <input id="q12-3" type="radio" name="q12" value="3"><label for="q12-3">3</label>
+            <input id="q12-4" type="radio" name="q12" value="4"><label for="q12-4">4</label>
+            <input id="q12-5" type="radio" name="q12" value="5"><label for="q12-5">5</label>
+            <input id="q12-6" type="radio" name="q12" value="6"><label for="q12-6">6</label>
+            <input id="q12-7" type="radio" name="q12" value="7"><label for="q12-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">13) I struggle with time management and keeping up with responsibilities. (reverse)</p>
+          <div class="likert" data-q="q13">
+            <input id="q13-1" type="radio" name="q13" value="1" required><label for="q13-1">1</label>
+            <input id="q13-2" type="radio" name="q13" value="2"><label for="q13-2">2</label>
+            <input id="q13-3" type="radio" name="q13" value="3"><label for="q13-3">3</label>
+            <input id="q13-4" type="radio" name="q13" value="4"><label for="q13-4">4</label>
+            <input id="q13-5" type="radio" name="q13" value="5"><label for="q13-5">5</label>
+            <input id="q13-6" type="radio" name="q13" value="6"><label for="q13-6">6</label>
+            <input id="q13-7" type="radio" name="q13" value="7"><label for="q13-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">14) I often go through my week without making a plan or schedule. (reverse)</p>
+          <div class="likert" data-q="q14">
+            <input id="q14-1" type="radio" name="q14" value="1" required><label for="q14-1">1</label>
+            <input id="q14-2" type="radio" name="q14" value="2"><label for="q14-2">2</label>
+            <input id="q14-3" type="radio" name="q14" value="3"><label for="q14-3">3</label>
+            <input id="q14-4" type="radio" name="q14" value="4"><label for="q14-4">4</label>
+            <input id="q14-5" type="radio" name="q14" value="5"><label for="q14-5">5</label>
+            <input id="q14-6" type="radio" name="q14" value="6"><label for="q14-6">6</label>
+            <input id="q14-7" type="radio" name="q14" value="7"><label for="q14-7">7</label>
+          </div>
+        </div>
+
+        <!-- Neuroticism -->
+        <h2 class="section">Neuroticism vs. Emotional Stability</h2>
+
+        <div class="question">
+          <p class="qtext">15) I often feel anxious or worried about small things.</p>
+          <div class="likert" data-q="q15">
+            <input id="q15-1" type="radio" name="q15" value="1" required><label for="q15-1">1</label>
+            <input id="q15-2" type="radio" name="q15" value="2"><label for="q15-2">2</label>
+            <input id="q15-3" type="radio" name="q15" value="3"><label for="q15-3">3</label>
+            <input id="q15-4" type="radio" name="q15" value="4"><label for="q15-4">4</label>
+            <input id="q15-5" type="radio" name="q15" value="5"><label for="q15-5">5</label>
+            <input id="q15-6" type="radio" name="q15" value="6"><label for="q15-6">6</label>
+            <input id="q15-7" type="radio" name="q15" value="7"><label for="q15-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">16) I find it hard to relax after stressful experiences.</p>
+          <div class="likert" data-q="q16">
+            <input id="q16-1" type="radio" name="q16" value="1" required><label for="q16-1">1</label>
+            <input id="q16-2" type="radio" name="q16" value="2"><label for="q16-2">2</label>
+            <input id="q16-3" type="radio" name="q16" value="3"><label for="q16-3">3</label>
+            <input id="q16-4" type="radio" name="q16" value="4"><label for="q16-4">4</label>
+            <input id="q16-5" type="radio" name="q16" value="5"><label for="q16-5">5</label>
+            <input id="q16-6" type="radio" name="q16" value="6"><label for="q16-6">6</label>
+            <input id="q16-7" type="radio" name="q16" value="7"><label for="q16-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">17) I get upset easily over unexpected changes.</p>
+          <div class="likert" data-q="q17">
+            <input id="q17-1" type="radio" name="q17" value="1" required><label for="q17-1">1</label>
+            <input id="q17-2" type="radio" name="q17" value="2"><label for="q17-2">2</label>
+            <input id="q17-3" type="radio" name="q17" value="3"><label for="q17-3">3</label>
+            <input id="q17-4" type="radio" name="q17" value="4"><label for="q17-4">4</label>
+            <input id="q17-5" type="radio" name="q17" value="5"><label for="q17-5">5</label>
+            <input id="q17-6" type="radio" name="q17" value="6"><label for="q17-6">6</label>
+            <input id="q17-7" type="radio" name="q17" value="7"><label for="q17-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">18) I often dwell on mistakes or embarrassing moments.</p>
+          <div class="likert" data-q="q18">
+            <input id="q18-1" type="radio" name="q18" value="1" required><label for="q18-1">1</label>
+            <input id="q18-2" type="radio" name="q18" value="2"><label for="q18-2">2</label>
+            <input id="q18-3" type="radio" name="q18" value="3"><label for="q18-3">3</label>
+            <input id="q18-4" type="radio" name="q18" value="4"><label for="q18-4">4</label>
+            <input id="q18-5" type="radio" name="q18" value="5"><label for="q18-5">5</label>
+            <input id="q18-6" type="radio" name="q18" value="6"><label for="q18-6">6</label>
+            <input id="q18-7" type="radio" name="q18" value="7"><label for="q18-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">19) I usually stay calm under pressure. (reverse)</p>
+          <div class="likert" data-q="q19">
+            <input id="q19-1" type="radio" name="q19" value="1" required><label for="q19-1">1</label>
+            <input id="q19-2" type="radio" name="q19" value="2"><label for="q19-2">2</label>
+            <input id="q19-3" type="radio" name="q19" value="3"><label for="q19-3">3</label>
+            <input id="q19-4" type="radio" name="q19" value="4"><label for="q19-4">4</label>
+            <input id="q19-5" type="radio" name="q19" value="5"><label for="q19-5">5</label>
+            <input id="q19-6" type="radio" name="q19" value="6"><label for="q19-6">6</label>
+            <input id="q19-7" type="radio" name="q19" value="7"><label for="q19-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">20) I quickly recover emotionally after setbacks. (reverse)</p>
+          <div class="likert" data-q="q20">
+            <input id="q20-1" type="radio" name="q20" value="1" required><label for="q20-1">1</label>
+            <input id="q20-2" type="radio" name="q20" value="2"><label for="q20-2">2</label>
+            <input id="q20-3" type="radio" name="q20" value="3"><label for="q20-3">3</label>
+            <input id="q20-4" type="radio" name="q20" value="4"><label for="q20-4">4</label>
+            <input id="q20-5" type="radio" name="q20" value="5"><label for="q20-5">5</label>
+            <input id="q20-6" type="radio" name="q20" value="6"><label for="q20-6">6</label>
+            <input id="q20-7" type="radio" name="q20" value="7"><label for="q20-7">7</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p class="qtext">21) I rarely let stress affect my daily life. (reverse)</p>
+          <div class="likert" data-q="q21">
+            <input id="q21-1" type="radio" name="q21" value="1" required><label for="q21-1">1</label>
+            <input id="q21-2" type="radio" name="q21" value="2"><label for="q21-2">2</label>
+            <input id="q21-3" type="radio" name="q21" value="3"><label for="q21-3">3</label>
+            <input id="q21-4" type="radio" name="q21" value="4"><label for="q21-4">4</label>
+            <input id="q21-5" type="radio" name="q21" value="5"><label for="q21-5">5</label>
+            <input id="q21-6" type="radio" name="q21" value="6"><label for="q21-6">6</label>
+            <input id="q21-7" type="radio" name="q21" value="7"><label for="q21-7">7</label>
+          </div>
         </div>
 
         <div class="submitRow">
-          <button type="button" class="btn" id="submitBtn">Submit Quiz</button>
+          <button class="btn" type="submit">Submit Quiz</button>
         </div>
       </form>
 
-      <div id="resultsArea" class="results" style="display:none; margin-top:18px"></div>
+      <div id="results" aria-live="polite"></div>
     </div>
   </div>
 
 <script>
-/* QUESTIONS: internal array. Each item:
-  {id:'q1', text:'...', trait:'extroversion'|'conscientiousness'|'neuroticism', reverse: true/false}
-  reverse true means use reverse scoring (value -> 8 - value)
-*/
-const questions = [
-  {id:'q1', text:'I prefer communicating through texts, calls, or social media rather than in person.', trait:'extroversion', reverse:false},
-  {id:'q2', text:'I am content spending time at home without making plans on weekends.', trait:'extroversion', reverse:false},
-  {id:'q3', text:'My “social battery” decreases after spending extended periods of time with people.', trait:'extroversion', reverse:false},
-  {id:'q4', text:'I prefer traveling to quiet places over busy cities.', trait:'extroversion', reverse:false},
-  {id:'q5', text:'I enjoy speaking in front of a group, often improvising.', trait:'extroversion', reverse:true},
-  {id:'q6', text:'I prefer doing school or work tasks with others rather than alone.', trait:'extroversion', reverse:true},
-  {id:'q7', text:'I am comfortable expressing my opinions, regardless of others’.', trait:'extroversion', reverse:true},
+  // Reverse mapping
+  const reverse = v => 8 - v;
 
-  {id:'q8', text:'When completing a task, I take extra care to avoid making mistakes.', trait:'conscientiousness', reverse:false},
-  {id:'q9', text:'I consistently set challenging yet achievable goals.', trait:'conscientiousness', reverse:false},
-  {id:'q10', text:'I am able to concentrate on tasks despite distractions.', trait:'conscientiousness', reverse:false},
-  {id:'q11', text:'I maintain a neat and organized room.', trait:'conscientiousness', reverse:false},
-  {id:'q12', text:'I find myself breaking promises and commitments.', trait:'conscientiousness', reverse:true},
-  {id:'q13', text:'I struggle with time management and keeping up with responsibilities.', trait:'conscientiousness', reverse:true},
-  {id:'q14', text:'I often go through my week without making a plan or schedule.', trait:'conscientiousness', reverse:true},
-
-  {id:'q15', text:'I often feel anxious about small things.', trait:'neuroticism', reverse:false},
-  {id:'q16', text:'I get upset easily when things don’t go as planned.', trait:'neuroticism', reverse:false},
-  {id:'q17', text:'I find myself worrying frequently about the future.', trait:'neuroticism', reverse:false},
-  {id:'q18', text:'I often feel down or depressed for no clear reason.', trait:'neuroticism', reverse:false},
-  {id:'q19', text:'I stay calm under pressure.', trait:'neuroticism', reverse:true},
-  {id:'q20', text:'I bounce back quickly after setbacks.', trait:'neuroticism', reverse:true},
-  {id:'q21', text:'I rarely let emotions control my decisions.', trait:'neuroticism', reverse:true}
-];
-
-// create question nodes
-const wrap = document.getElementById('questionsWrap');
-
-questions.forEach((q, idx) => {
-  const qCard = document.createElement('div');
-  qCard.className = 'qcard';
-  qCard.dataset.id = q.id;
-  qCard.dataset.trait = q.trait;
-  qCard.dataset.reverse = q.reverse ? 'true' : 'false';
-
-  const qtext = document.createElement('div');
-  qtext.className = 'qtext';
-  qtext.textContent = (idx+1) + '. ' + q.text;
-  qCard.appendChild(qtext);
-
-  // likert header row (small numbers)
-  const likert = document.createElement('div');
-  likert.className = 'likert';
-
-  // create 7 options
-  for(let val=1; val<=7; val++){
-    const label = document.createElement('label');
-    label.className = 'opt';
-    label.setAttribute('data-value', val);
-    label.setAttribute('aria-role','radio');
-
-    const radio = document.createElement('input');
-    radio.type='radio';
-    radio.name=q.id;
-    radio.value=val;
-    radio.id = q.id + '-' + val;
-
-    label.appendChild(radio);
-
-    const span = document.createElement('div');
-    span.style.fontSize='13px';
-    span.textContent = val;
-    label.appendChild(span);
-
-    // clicking label selects radio and toggles selected style
-    label.addEventListener('click', (ev) => {
-      // set the radio as checked
-      radio.checked = true;
-      // clear any other selected in same group
-      const group = document.getElementsByName(q.id);
-      document.querySelectorAll('[name="'+q.id+'"]').forEach(x => {
-        // the inputs are hidden; find their parent labels and remove 'selected'
-        if(x.parentElement) x.parentElement.classList.remove('selected');
-      });
-      // add selected to this label
-      label.classList.add('selected');
-    });
-
-    likert.appendChild(label);
-  }
-
-  qCard.appendChild(likert);
-  wrap.appendChild(qCard);
-});
-
-// Handling submit
-document.getElementById('submitBtn').addEventListener('click', () => {
-  // ensure all answered
-  const totalQs = questions.length;
-  let answered = 0;
-  const answers = {};
-  questions.forEach(q => {
-    const checked = document.querySelector('input[name="'+q.id+'"]:checked');
-    if(checked) { answered++; answers[q.id] = parseInt(checked.value); }
-  });
-  if(answered < totalQs){
-    alert('Please answer every question before submitting. You have answered ' + answered + ' of ' + totalQs + '.');
-    return;
-  }
-
-  // scoring
-  const traits = {
-    extroversion: {sum:0, count:0},
-    conscientiousness: {sum:0, count:0},
-    neuroticism: {sum:0, count:0}
+  // Descriptions
+  const descriptions = {
+    extro_int: "You prefer quieter settings, recharge alone, and favor one-on-one or small-group interactions.",
+    extro_ext: "You enjoy social interaction, feel energized by groups, and often seek lively environments.",
+    con_un: "You tend to be more spontaneous and relaxed about schedules; structure isn't your priority.",
+    con_con: "You're organized, reliable, and keep plans — you focus on goals and follow-through.",
+    neu_stable: "You remain calm under pressure, recover quickly from setbacks, and manage stress well.",
+    neu_neuro: "You are more prone to worry and emotional reactivity; stress affects you more strongly."
   };
 
-  questions.forEach(q => {
-    let val = answers[q.id];
-    if(q.reverse) val = 8 - val; // reverse scoring
-    traits[q.trait].sum += val;
-    traits[q.trait].count += 1;
-  });
+  document.getElementById('quizForm').addEventListener('submit', function(e){
+    e.preventDefault();
 
-  // totals (7 items => range 7-49). cutoff per instructions: >=28 maps to first named
-  // For extroversion: original mapping was "Introverted → 28+  Extroverted → <28"
-  // We'll follow exactly: if ext_total >=28 -> Introverted; else Extroverted
-  const extTotal = traits.extroversion.sum;
-  const conTotal = traits.conscientiousness.sum;
-  const neuTotal = traits.neuroticism.sum;
+    // collect answers
+    const get = i => {
+      const el = document.querySelector(`input[name="q${i}"]:checked`);
+      return el ? parseInt(el.value) : null;
+    };
 
-  const extLabel = extTotal >= 28 ? 'Introverted' : 'Extroverted';
-  const conLabel = conTotal >= 28 ? 'Conscientious' : 'Unconscientious';
-  const neuLabel = neuTotal >= 28 ? 'Neurotic' : 'Emotionally Stable';
-
-  // generate friendly explanations
-  const explanations = {
-    extroversion:{
-      Introverted: "You prefer quieter settings, recharge alone, and often prioritize close one-on-one connections over large social scenes.",
-      Extroverted: "You enjoy social interaction, feel energized by groups, and often seek out lively environments and social activities."
-    },
-    conscientiousness:{
-      Conscientious: "You're organized, dependable, and focused on goals—you keep schedules and pay attention to details.",
-      Unconscientious: "You tend to be more spontaneous and relaxed about plans and schedules; structure may not be your top priority."
-    },
-    neuroticism:{
-      Neurotic: "You are more prone to stress and emotional fluctuation; you may worry more and feel strong emotional reactions.",
-      "Emotionally Stable": "You tend to remain calm under pressure, recover quickly from setbacks, and regulate emotions effectively."
+    // Validate all answered
+    for (let i=1;i<=21;i++){
+      if (get(i) === null) { alert('Please answer every question.'); return; }
     }
-  };
 
-  // Show results area
-  const resultsArea = document.getElementById('resultsArea');
-  resultsArea.innerHTML = ''; // clear
+    // Extroversion scoring: q1-4 normal, q5-7 reverse (because high => Introverted)
+    let extTotal = 0;
+    for (let i=1;i<=4;i++) extTotal += get(i);
+    for (let i=5;i<=7;i++) extTotal += reverse(get(i));
 
-  // helper to create a result card
-  function makeCard(icon, title, label, explanation, score){
-    const card = document.createElement('div'); card.className='resultCard';
-    const ic = document.createElement('div'); ic.className='icon'; ic.textContent = icon;
-    const rt = document.createElement('div'); rt.className='rtext';
-    const h4 = document.createElement('h4'); h4.textContent = title + ' → ' + label;
-    const p = document.createElement('p'); p.className='muted'; p.textContent = explanation;
-    rt.appendChild(h4); rt.appendChild(p);
-    const badge = document.createElement('div'); badge.className='scoreBadge'; badge.textContent = score + ' pts';
-    card.appendChild(ic); card.appendChild(rt); card.appendChild(badge);
-    return card;
-  }
+    // Conscientiousness: q8-11 normal, q12-14 reverse
+    let conTotal = 0;
+    for (let i=8;i<=11;i++) conTotal += get(i);
+    for (let i=12;i<=14;i++) conTotal += reverse(get(i));
 
-  // three cards: extroversion, conscientiousness, neuroticism
-  resultsArea.appendChild(makeCard('🎭', 'Extraversion', extLabel, explanations.extroversion[extLabel], extTotal));
-  resultsArea.appendChild(makeCard('📋', 'Conscientiousness', conLabel, explanations.conscientiousness[conLabel], conTotal));
-  resultsArea.appendChild(makeCard('💭', 'Emotionality', neuLabel, explanations.neuroticism[neuLabel], neuTotal));
+    // Neuroticism: q15-18 normal, q19-21 reverse
+    let neuTotal = 0;
+    for (let i=15;i<=18;i++) neuTotal += get(i);
+    for (let i=19;i<=21;i++) neuTotal += reverse(get(i));
 
-  // show also a short composite line
-  const composite = document.createElement('div');
-  composite.className = 'resultCard';
-  composite.style.justifyContent = 'space-between';
-  composite.innerHTML = '<div style="font-weight:700">Composite:</div><div style="font-weight:700">' + extLabel + ' — ' + conLabel + ' — ' + neuLabel + '</div>';
-  resultsArea.appendChild(composite);
+    // each trait range: 7..49
+    const max = 49;
+    // Marker positions:
+    // For Extroversion labels show: [Introvert] ... [Extrovert]
+    // BUT mapping: extTotal >=28 => Introverted. So higher extTotal = more Introvert (left).
+    // We map position% where 0% = left, 100% = right.
+    // To place marker consistent with labels, invert extTotal:
+    const extPos = 100 - (extTotal / max * 100); // high extTotal => left
+    // Conscientiousness: higher => Conscientious (right side)
+    const conPos = (conTotal / max * 100);
+    // Neuroticism: higher => Neurotic (right side)
+    const neuPos = (neuTotal / max * 100);
 
-  resultsArea.style.display = 'block';
-  // smooth scroll to results
-  setTimeout(()=> resultsArea.scrollIntoView({behavior:'smooth', block:'center'}), 60);
-});
+    // labels according to cutoff 28
+    const extLabel = extTotal >= 28 ? 'Introverted' : 'Extroverted';
+    const conLabel = conTotal >= 28 ? 'Conscientious' : 'Unconscientious';
+    const neuLabel = neuTotal >= 28 ? 'Neurotic' : 'Emotionally Stable';
+
+    // friendly descriptions
+    const extDesc = extTotal >= 28 ? descriptions.extro_int : descriptions.extro_ext;
+    const conDesc = conTotal >= 28 ? descriptions.con_con : descriptions.con_un;
+    const neuDesc = neuTotal >= 28 ? descriptions.neu_neuro : descriptions.neu_stable;
+
+    // Build results HTML
+    const results = document.getElementById('results');
+    results.style.display = 'block';
+    results.innerHTML = `
+      <div class="resultCard">
+        <div style="flex:1">
+          <div class="traitTitle"><h3>Introvert ↔ Extrovert</h3><div style="margin-left:auto" class="scoreBadge">${extTotal} pts</div></div>
+          <div class="traitDesc">${extLabel} — ${extDesc}</div>
+          <div class="scale" aria-hidden="true">
+            <div class="fill" style="width:0%"></div>
+            <div class="marker" style="left:0%"></div>
+          </div>
+          <div class="barLabels"><span>Introvert</span><span>Extrovert</span></div>
+        </div>
+      </div>
+
+      <div class="resultCard">
+        <div style="flex:1">
+          <div class="traitTitle"><h3>Unconscientious ↔ Conscientious</h3><div style="margin-left:auto" class="scoreBadge">${conTotal} pts</div></div>
+          <div class="traitDesc">${conLabel} — ${conDesc}</div>
+          <div class="scale" aria-hidden="true">
+            <div class="fill" style="width:0%"></div>
+            <div class="marker" style="left:0%"></div>
+          </div>
+          <div class="barLabels"><span>Unconscientious</span><span>Conscientious</span></div>
+        </div>
+      </div>
+
+      <div class="resultCard">
+        <div style="flex:1">
+          <div class="traitTitle"><h3>Emotionally Stable ↔ Neurotic</h3><div style="margin-left:auto" class="scoreBadge">${neuTotal} pts</div></div>
+          <div class="traitDesc">${neuLabel} — ${neuDesc}</div>
+          <div class="scale" aria-hidden="true">
+            <div class="fill" style="width:0%"></div>
+            <div class="marker" style="left:0%"></div>
+          </div>
+          <div class="barLabels"><span>Stable</span><span>Neurotic</span></div>
+        </div>
+      </div>
+    `;
+
+    // animate markers & fills after insertion
+    // small timeout so DOM paints first
+    setTimeout(()=> {
+      const cards = results.querySelectorAll('.resultCard');
+      // extro card
+      const extCard = cards[0];
+      extCard.querySelector('.fill').style.width = `${100 - extPos}%`; // show gradient fill toward left for visual
+      extCard.querySelector('.marker').style.left = `${extPos}%`;
+
+      const conCard = cards[1];
+      conCard.querySelector('.fill').style.width = `${conPos}%`;
+      conCard.querySelector('.marker').style.left = `${conPos}%`;
+
+      const neuCard = cards[2];
+      neuCard.querySelector('.fill').style.width = `${neuPos}%`;
+      neuCard.querySelector('.marker').style.left = `${neuPos}%`;
+
+      // smooth scroll to results
+      results.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 80);
+  });
 </script>
 </body>
 </html>
